@@ -240,7 +240,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res
     .status(200)
-    .json(200, req.user, "current user fetched successfully")
+    .json(new ApiResponse(200, req.user, "current user fetched successfully"))
 })
 
 // updateAccountDetails
@@ -251,7 +251,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         throw new ApiError(400, "All fields are required")
     }
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
@@ -293,13 +293,15 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     ).select(" -password ")
 
+    // TODO: delete old avatar image
+
     return res
     .status(200)
     .json(new ApiResponse(200, user, "Avatar updated successfully"))
 })
 
 
-// updateUserAvatar
+// updateUserCoverImage
 const updateUserCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req.file?.path
 
